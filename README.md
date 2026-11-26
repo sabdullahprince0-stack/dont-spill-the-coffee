@@ -13,7 +13,7 @@ git clone https://github.com/sabdullahprince0-stack/dont-spill-the-coffee.git
 cd dont-spill-the-coffee
 ```
 
-Open `index.html` in Chrome or Edge, or open the folder in VS Code and use Live Server. Keep the `assets/` folder alongside the HTML. If a future refactor changes the launch requirements, update this README before merging.
+Open `index.html` in Chrome or Edge, or open the folder in VS Code and use Live Server. Keep the `assets/`, `css/` and `js/` folders alongside the HTML. Direct `file://` opening works without a server or internet connection.
 
 | Control | Action |
 | --- | --- |
@@ -62,7 +62,35 @@ The simulation uses a fixed 120 Hz timestep. The fluid model is an educational a
 
 ## Project structure
 
-Current baseline: V0.7, with HTML, CSS and JavaScript primarily in `index.html`, and artwork in `assets/`. The next task is a behavior-preserving refactor; see [AGENTS.md](AGENTS.md) for the target architecture, invariants and validation checklist. Do not assume the target modules exist until the refactor is merged.
+V0.7 is separated into plain HTML, CSS and ordered classic scripts. The scripts share one explicit `window.CoffeeGame` namespace; mutable values live in `CoffeeGame.state`. Keep the script order in `index.html`, with `main.js` last. No ES module imports, runtime JSON fetches, dependencies or build step are required.
+
+| File | Responsibility |
+| --- | --- |
+| `index.html` | Markup, accessible labels, existing DOM IDs and local stylesheet/script links |
+| `assets/` | Unchanged approved artwork and HUD metadata |
+| `css/styles.css` | All styles, including responsive layout |
+| `js/config.js` | Namespace, physical/model constants, motion modes and clamp helper |
+| `js/state.js` | Shared state, preferences, save migration and progress persistence |
+| `js/assets.js` | Base images, readiness and embedded HUD glyph metadata |
+| `js/routes.js` | Six route parameters and matching artwork/lighting |
+| `js/audio.js` | Procedural Web Audio soundscape and its separate random stream |
+| `js/physics.js` | Events, fixed-step simulation, slosh, overflow and droplets |
+| `js/render.js` | Canvas scenery, cup/liquid geometry and raster HUD lettering |
+| `js/endings.js` | Grade thresholds, precise campaign average, results and dialogue |
+| `js/ui.js` | Menus, route buttons, settings, monitor and input wiring |
+| `js/main.js` | Initialization, route reset and animation loop |
+| `tools/` | Development-only original-versus-refactor checks using Node built-ins |
+
+Route-specific image creation stays with its route mapping. Droplet spawn positions still use the renderer's cup geometry, as in V0.7. Cross-file callbacks run after all scripts load. The HUD metadata remains embedded in JavaScript so local JSON loading is unnecessary. See [AGENTS.md](AGENTS.md) for invariants and [the refactor review](docs/refactor-review.md) for the inventory and validation evidence.
+
+Optional development checks (Node 24 and Git; neither is needed to play):
+
+```bash
+node tools/refactor-check.mjs
+node tools/browser-check.mjs
+```
+
+The first compares against the original V0.7 source at Git commit `0762552`, including seeded physics replays and asset checksums. The second uses an installed Chrome with a temporary profile to compare both versions over `file://`; pass an executable path as its first argument to use another Chrome/Edge installation. Browser screenshots and observations are written to a temporary folder printed by the command. These tools do not read or change your regular browser saves.
 
 ## Contributing
 
