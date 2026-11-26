@@ -1,110 +1,127 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Don't Spill the Coffee! — V0.7</title><style>
-*{box-sizing:border-box}html{color-scheme:dark}body{margin:0;background:#171310;color:#e5d1b0;font-family:Georgia,serif;min-height:100vh;display:grid;place-items:center}main{width:min(1200px,100vw,calc((100dvh - 115px)*1.779));padding:8px 0}header{display:flex;justify-content:space-between;align-items:center;margin:0 12px 7px}h1{font-size:clamp(12px,2vw,20px);font-weight:normal;letter-spacing:.14em;text-transform:uppercase;margin:0}button{font:inherit;color:#e5d1b0;background:transparent;border:1px solid #82705a;padding:8px 14px;border-radius:0;cursor:pointer;touch-action:none}button:hover,button:focus-visible{background:#3c2f24;outline:1px solid #d5b68d}button:disabled{opacity:.3;cursor:default}.stage{position:relative;overflow:hidden;background:#211b17;border:1px solid #584836}canvas{width:100%;height:auto;display:block;touch-action:none}.controls{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:7px 12px}.controls button{min-width:80px;font-size:13px}.small{font-size:12px;color:#a99880}.settings{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}#mute,#motion{border:0;padding:5px;font-size:12px}#motion{min-width:102px}#panel{position:absolute;inset:0;display:grid;place-items:center;background:#1a130fae;padding:12px;backdrop-filter:blur(2px)}#panel[hidden]{display:none}.sheet{background:linear-gradient(110deg,#211913ef,#31251bea);border-block:1px solid #9b7950;padding:clamp(12px,3vw,32px);width:min(490px,95%);text-align:center;box-shadow:0 12px 50px #0007}.sheet h2{margin:0 0 12px;font-size:clamp(18px,4vw,32px);font-weight:normal;letter-spacing:.07em}.sheet p{margin:8px auto 18px;line-height:1.45;color:#d4bfa0;font-size:clamp(12px,1.7vw,17px)}.sheet button{margin:4px;text-transform:uppercase;letter-spacing:.06em;font-size:13px}.stats{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}#routes{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin:4px 12px}#routes button{padding:4px 7px;font-size:11px;border-color:#5b4a38}#routes button.active{border-color:#d1ad78;color:#f3dec0}.foot{display:none} @media(max-width:650px){main{width:100vw}.controls{margin:7px}.controls .small{font-size:10px}.sheet{padding:9px}.sheet p{margin:5px auto 8px}.sheet h2{margin:0 0 5px}.sheet button{padding:5px 8px;font-size:11px}#routes button{font-size:10px}} @media(max-height:450px) and (orientation:landscape){main{width:min(100vw,calc((100dvh - 64px)*1.779))}header,#routes{display:none}.controls{margin:4px}}
-
-[hidden]{display:none!important}#cafe{position:relative;width:min(1200px,100vw,calc(100dvh * 1.776));aspect-ratio:1648/928;overflow:hidden;background:#211913;isolation:isolate}#cafe>img{display:block;width:100%;height:100%;object-fit:contain}.menu-hit{position:absolute;left:8.4%;width:27.7%;height:8.8%;padding:0;border:0;color:transparent;background:transparent;outline:none;touch-action:manipulation}.menu-hit:hover,.menu-hit:focus-visible{background:#f0c78a14;outline:1px solid #d9b27d;box-shadow:0 0 22px #e0b67d33}.menu-hit:disabled{background:#110c0960;opacity:1;cursor:default}.menu-hit:nth-of-type(1){top:42%}.menu-hit:nth-of-type(2){top:52%}.menu-hit:nth-of-type(3){top:61.9%}.menu-hit:nth-of-type(4){top:71.5%}.menu-hit:focus-visible{outline:2px solid #f4d6a2}#cafe-dialog{position:absolute;inset:0;background:#150f0bdb;display:grid;place-items:center;padding:12px}#cafe-dialog .sheet{max-height:96%;overflow:auto}#menuBack{border:0;padding:5px;font-size:12px}#cafe .sheet p{white-space:pre-line}#cafe .sheet button{touch-action:manipulation}body:has(#cafe:not([hidden])){background:#100d0b}
-
-#physicsToggle{border:0;padding:5px;font-size:12px;white-space:nowrap}#physicsMonitor{margin:10px 12px 6px;border-top:1px solid #69563e;padding:12px 4px;color:#d4bfa0}#physicsMonitor h2{font-size:15px;font-weight:normal;letter-spacing:.12em;text-transform:uppercase;margin:0 0 4px}#physicsMonitor p{font-size:12px;line-height:1.5;margin:4px 0 10px;color:#aa9980}.physics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:12px 16px}.physics-grid div{border-bottom:1px solid #4f4032;padding-bottom:7px;min-width:0}.physics-grid dt{font-size:11px;color:#a99880}.physics-grid dd{font-size:18px;margin:3px 0;font-variant-numeric:tabular-nums}.physics-grid small{font-size:10px;color:#a99880}.physics-grid{margin:0 0 10px}.physics-note{border-top:1px solid #4f4032;padding-top:7px}body:has(#game:not([hidden]) #physicsMonitor:not([hidden])){place-items:start center}@media(min-width:651px) and (min-height:650px){main:has(#physicsMonitor:not([hidden])){width:min(1200px,100vw, max(650px,calc((100dvh - 315px)*1.779)))}}#pd{white-space:pre-line}#panel .sheet{max-height:96%;overflow:auto}#endingScores{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 10px;margin:0 0 10px;text-align:left;font-size:11px;color:#c4ae8d}#endingScores span{white-space:nowrap}#endingScores b{font-weight:normal;color:#efdbb6} @media(max-width:650px){.physics-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#endingScores{font-size:10px}}
-</style></head><body><section id="cafe" aria-label="Main menu"><img src="assets/menu.jpg" alt="Don't Spill the Coffee! A café at dusk, a coffee cup, and a note: See you at campus. Don't forget my coffee."><button class="menu-hit" id="menuStart" aria-label="Start Journey" title="Start Journey"></button><button class="menu-hit" id="menuContinue" aria-label="Continue Journey" title="Continue Journey"></button><button class="menu-hit" id="menuSettings" aria-label="Settings" title="Settings"></button><button class="menu-hit" id="menuCredits" aria-label="Credits" title="Credits"></button><div id="cafe-dialog" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="menuTitle"><h2 id="menuTitle"></h2><p id="menuDesc"></p><div id="menuActions"></div></div></div></section><main id="game" hidden><header><h1>Don't Spill the Coffee!</h1><div class="settings"><button id="menuBack">Main menu</button><button id="motion" title="Change scenery movement and camera shake">Motion: gentle</button><button id="mute">Sound: on</button><button id="physicsToggle" aria-controls="physicsMonitor" aria-expanded="false">Physics: off</button></div></header><div class="stats" aria-live="off"><span id="route"></span><span id="coffee"></span><span id="accel"></span><span id="distance"></span></div><div class="stage"><canvas id="c" width="900" height="506" aria-label="Coffee cup inside a moving jeepney"></canvas><div id="panel"><div class="sheet"><h2 id="pt"></h2><p id="pd"></p><div id="endingScores" hidden></div><div id="actions"></div></div></div></div><div class="controls"><button id="left">← A</button><span class="small" style="text-align:center">Tilt against the slosh · R retry · P pause</span><button id="right">D →</button></div><div id="routes"></div><section id="physicsMonitor" hidden aria-label="Live physics monitor"><h2>Physics monitor · Units 1 &amp; 2</h2><p>Live values from the simulation. Press I or use the Physics button to show or hide this panel.</p><dl class="physics-grid"><div><dt>Speed</dt><dd id="pv">—</dd><small>m/s · v</small></div><div><dt>Horizontal acceleration</dt><dd id="pax">—</dd><small>m/s² · aₓ</small></div><div><dt>Vertical acceleration</dt><dd id="pay">—</dd><small>m/s² · aᵧ (road input)</small></div><div><dt>Distance traveled</dt><dd id="pdist">—</dd><small>m · Σ v Δt</small></div><div><dt>Cup tilt</dt><dd id="ptheta">—</dd><small>° · θ</small></div><div><dt>Liquid slosh</dt><dd id="pslosh">—</dd><small>° · relative to cup</small></div><div><dt>Effective gravity</dt><dd id="pg">—</dd><small>m/s² · simplified model</small></div><div><dt>Effective gravity tilt</dt><dd id="pangle">—</dd><small>° · relative to world vertical</small></div><div><dt>Kinetic energy per kg</dt><dd id="pke">—</dd><small>J/kg · v² / 2 (jeepney)</small></div><div><dt>Coffee remaining</dt><dd id="pcoffee">—</dd><small>% · remaining fraction</small></div></dl><p class="physics-note">Unit 1: Kinematics, inertia, gravity and liquid oscillation. g = 9.81 m/s². Unit 2: Kinetic energy per unit mass is a derived teaching value, not a force in the game. Effective gravity uses the game’s tuned horizontal response (1.22 × aₓ) and a minimum downward component of 2 m/s². The coffee is a simplified slosh model, not a full fluid simulation.</p></section></main><script>
-const $=id=>document.getElementById(id),c=$('c'),x=c.getContext('2d');const levels=[['The neighborhood',32,2.8,0.45],['City traffic',38,4.2,.7],['Pothole province',42,4.8,1.5],['Mountain road',46,5.8,1.25],['Highway madness',48,7,1.0],['The jeepney final boss',55,8.2,2.1]];let save={unlocked:0,best:[]};try{let old=JSON.parse(localStorage.getItem('coffee-delivery-v1'));save=JSON.parse(localStorage.getItem('coffee-delivery-v03'))||{unlocked:old?.unlocked||0,best:[]}}catch{};let level=0,state='menu',t=0,amount=1,theta=0,omega=0,slosh=0,sv=0,ax=0,ay=0,speed=0,dist=0,event=null,next=0,keys={},drops=[],shake=0,muted=false,lastSpill=0,scroll=0,visualSpeed=0,chain=null,hold=0,lastDir=0;const motionModes=['gentle','minimal','still'];let motion=0;try{let m=localStorage.getItem('coffee-motion-v03');if(m!==null&&motionModes.includes(m))motion=motionModes.indexOf(m);else if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)motion=2}catch{};const G=9.81,W=160,H=180,fill0=0.87;const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));try{muted=localStorage.getItem('coffee-sound-v04')==='off'}catch{};
-// Procedural soundscape. Separate random stream: audio cannot alter driving events.
-const soundscape=(()=>{
- let ctx,master,bed,fx,engine,engine2,rumble,road,roadGain,engineGain,engineFilter,noise,ambienceAt=0,clock=0,lastEvent=null,wasActive=false,seed=927314,voiceCount=0;
- const rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
- const smooth=(param,value,time=.08)=>param.setTargetAtTime(value,ctx.currentTime,time);
- function init(){if(ctx)return true;try{let AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;ctx=new AC();master=ctx.createGain();master.gain.value=0;const compressor=ctx.createDynamicsCompressor();compressor.threshold.value=-19;compressor.ratio.value=3;master.connect(compressor);compressor.connect(ctx.destination);bed=ctx.createGain();bed.gain.value=0;bed.connect(master);fx=ctx.createGain();fx.gain.value=0;fx.connect(master);
- noise=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate);let data=noise.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=rand()*2-1;
- engineGain=ctx.createGain();engineGain.gain.value=.11;engineFilter=ctx.createBiquadFilter();engineFilter.type='lowpass';engineFilter.frequency.value=250;engineFilter.Q.value=.65;engineFilter.connect(engineGain);engineGain.connect(bed);
- function motor(type,f,volume){let o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.value=volume;o.connect(g);g.connect(engineFilter);o.start();return o}
- engine=motor('sawtooth',34,.52);engine2=motor('triangle',68,.23);
- rumble=ctx.createBufferSource();rumble.buffer=noise;rumble.loop=true;let low=ctx.createBiquadFilter();low.type='lowpass';low.frequency.value=100;let rg=ctx.createGain();rg.gain.value=.36;rumble.connect(low);low.connect(rg);rg.connect(engineFilter);rumble.start();
- road=ctx.createBufferSource();road.buffer=noise;road.loop=true;let rf=ctx.createBiquadFilter();rf.type='bandpass';rf.frequency.value=530;rf.Q.value=.45;roadGain=ctx.createGain();roadGain.gain.value=0;road.connect(rf);rf.connect(roadGain);roadGain.connect(bed);road.start();return true;
- }catch{ctx=null;return false}}
- function unlock(){if(!muted&&init()&&ctx.state==='suspended')ctx.resume().catch(()=>{});}
- function pulse({type='noise',freq=600,end=freq,filter='bandpass',q=.8,dur=.2,vol=.04,pan=0,delay=0,bus=fx}){if(!ctx||muted||ctx.state!=='running'||voiceCount>=32)return;let now=ctx.currentTime+delay,o=type==='noise'?ctx.createBufferSource():ctx.createOscillator(),g=ctx.createGain();if(type==='noise')o.buffer=noise;else{o.type=type;o.frequency.setValueAtTime(Math.max(15,freq),now);o.frequency.exponentialRampToValueAtTime(Math.max(15,end),now+dur)}let f=ctx.createBiquadFilter();f.type=filter;f.frequency.setValueAtTime(Math.max(20,freq),now);f.frequency.exponentialRampToValueAtTime(Math.max(20,end),now+dur);f.Q.value=q;o.connect(f);f.connect(g);if(ctx.createStereoPanner){let p=ctx.createStereoPanner();p.pan.value=pan;g.connect(p);p.connect(bus)}else g.connect(bus);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(Math.max(.0002,vol),now+Math.min(.045,dur*.22));g.gain.exponentialRampToValueAtTime(.0001,now+dur);voiceCount++;o.onended=()=>{voiceCount--;o.disconnect();f.disconnect();g.disconnect()};if(type==='noise')o.start(now,rand()*Math.max(0,noise.duration-dur-.02));else o.start(now);o.stop(now+dur+.01)}
- function spill(side){pulse({freq:1150,end:410,q:.55,dur:.13,vol:.09,pan:side*.4});pulse({type:'sine',freq:520+rand()*200,end:140,dur:.08,vol:.025,pan:side*.4,delay:.025})}
- function rattle(){for(let i=0;i<4;i++){pulse({freq:1000+rand()*2100,end:550,q:2.5,dur:.10+rand()*.13,vol:.035+rand()*.018,pan:(rand()-.5)*1.3,delay:i*.06});}pulse({freq:95,end:38,filter:'lowpass',dur:.27,vol:.16});}
- function cue(kind){if(kind==='BRAKE!')pulse({freq:2200,end:630,q:1.7,dur:.4,vol:.048});else if(kind==='FULL THROTTLE!')pulse({type:'triangle',freq:63,end:116,filter:'lowpass',dur:.35,vol:.055});else pulse({freq:470,end:190,q:1.4,dur:.18,vol:.034});}
- function environment(){let p=rand()<.5?-0.7:.7;let r=rand();if(r<.38){ // passing small motorcycle, distant and brief
- pulse({type:'sawtooth',freq:108,end:48,filter:'lowpass',dur:1.7,vol:.035,pan:p});pulse({freq:720,end:270,q:.5,dur:1.65,vol:.032,pan:p});
- }else if(r<.71){ // distant dog-like barks, intentionally stylized
- for(let i=0;i<2+(rand()<.35?1:0);i++){pulse({type:'triangle',freq:300+rand()*80,end:115,filter:'lowpass',dur:.20,vol:.027,pan:p,delay:i*.31});pulse({freq:700,end:360,dur:.15,vol:.021,pan:p,delay:i*.31});}
- }else{ // quiet evening insects and road ambience
- for(let i=0;i<4;i++)pulse({type:'sine',freq:2350+rand()*240,end:2150,dur:.10,vol:.009,pan:p,delay:i*.18});}}
- function update(dt){if(!ctx)return;let active=state==='play'&&!muted&&!document.hidden; smooth(master.gain,muted||document.hidden?0:.70,.035);smooth(bed.gain,active?1:0,.12);smooth(fx.gain,active?1:0,.045);if(!active){wasActive=false;return}if(!wasActive){lastEvent=null;ambienceAt=clock+3+rand()*3;wasActive=true}clock+=dt;const hz=29+speed*1.25+Math.max(0,ax)*2.1;smooth(engine.frequency,hz,.15);smooth(engine2.frequency,hz*2.02,.15);smooth(engineFilter.frequency,180+speed*9+Math.max(0,ax)*14,.17);smooth(engineGain.gain,.12+Math.min(.10,Math.abs(ax)*.009),.15);smooth(roadGain.gain,.025+speed*.005,.2);
- if(event&&t>=event.start&&t<event.start+event.dur&&lastEvent!==event){lastEvent=event;if(event.kind==='POTHOLE!'||event.kind==='ROUGH ROAD!')rattle();else cue(event.kind)}if(clock>=ambienceAt){environment();ambienceAt=clock+6+rand()*8}}
- function warning(){pulse({freq:1250,end:760,q:2,dur:.09,vol:.032});}
- function result(pass){if(!ctx||muted)return; // subdued arrival/failed cue on master, independent of paused effects bus
- const notes=pass?[294,370,440]:[220,147];notes.forEach((n,i)=>pulse({type:'sine',freq:n,end:n,filter:'lowpass',dur:.32,vol:.035,delay:i*.12,bus:master}));}
- function reset(){lastEvent=null;wasActive=false;}
- return {unlock,update,spill,result,warning,reset,get context(){return ctx},get status(){return ctx?{state:ctx.state,master:master.gain.value,bed:bed.gain.value,engine:engine.frequency.value,voices:voiceCount}:null}};
-})();
-
-function panel(title,desc,buttons){$('endingScores').hidden=true;$('pt').textContent=title;$('pd').textContent=desc;$('actions').replaceChildren();for(let [label,fn] of buttons){let b=document.createElement('button');b.textContent=label;b.onclick=fn;$('actions').append(b)}$('panel').hidden=false}function routes(){ $('routes').replaceChildren();levels.forEach((l,i)=>{let b=document.createElement('button');b.textContent=`${i+1}. ${l[0]}${save.best[i]!=null?' · '+grade(save.best[i]):''}`;b.disabled=i>save.unlocked;b.className=i===level?'active':'';b.onclick=()=>start(i);$('routes').append(b)})}function start(i){$('cafe').hidden=true;$('cafe-dialog').hidden=true;$('game').hidden=false;level=i;t=0;amount=1;theta=omega=slosh=sv=ax=ay=dist=scroll=0;speed=8;visualSpeed=0;hold=lastDir=0;chain=null;event=null;next=2;drops=[];lastSpill=0;state='play';keys={};$('panel').hidden=true;routes();soundscape.reset();soundscape.unlock()}function grade(a){return a>=.95?'S':a>=.8?'A':a>=.6?'B':a>=.4?'C':'F'}function campaignScore(best=save.best){const values=levels.map((_,i)=>best[i]);if(!values.every(v=>Number.isFinite(v)&&v>=.4&&v<=1))return null;return Math.round(values.reduce((n,v)=>n+v,0)/values.length*1e12)/1e12}
-const endings={S:['THE PERFECT DELIVERY','“You really came all this way for me?”\n“Next time, let’s get coffee together.”'],A:['A LITTLE CLOSER','“You actually remembered my order!”\n“You’re really sweet, you know that?”'],B:['IT’S THE THOUGHT THAT COUNTS','“What happened to this?”\n“Haha, it’s okay. Thank you for thinking of me.”'],C:['THE FRIENDZONE','“Did you drink half of it on the way here?”\n“Thanks, bro.”']};
-function percent(v){return (Math.floor(v*1000+1e-9)/10).toFixed(1)+'%'}
-function showEnding(){let score=campaignScore();if(score===null)return;state='end';keys={};let g=grade(score),[title,dialogue]=endings[g];panel(title,`Overall delivery: ${percent(score)} · Grade ${g}\n\n${dialogue}\n\nBased on your best successful delivery on each route.`,[['Improve a route',()=>start(0)],['Main menu',showCafe]]);let el=$('endingScores');el.replaceChildren();levels.forEach((_,i)=>{let item=document.createElement('span'),value=document.createElement('b');item.textContent=`Route 0${i+1} · `;value.textContent=`${percent(save.best[i])} ${grade(save.best[i])}`;item.append(value);el.append(item)});el.hidden=false}
-function finish(){state='end';let g=grade(amount),pass=amount>=.4;save.best[level]=Math.max(save.best[level]||0,amount);if(pass)save.unlocked=Math.max(save.unlocked,Math.min(5,level+1));try{localStorage.setItem('coffee-delivery-v03',JSON.stringify(save))}catch{}routes();soundscape.result(pass);let desc=`${percent(amount)} delivered · Grade ${g}. `;if(!pass)desc+='Your crush received a cup of disappointment. Try again.';else if(level===5)desc+='You made it to campus! Your overall grade determines the ending.';else desc+='Delivery accepted! Next route unlocked.';let buttons=[['Retry',()=>start(level)]];if(pass&&level<5)buttons.push(['Next route →',()=>start(level+1)]);let total=campaignScore();if(total!==null){desc+=` Overall: ${percent(total)} (${grade(total)}).`;buttons.push(['View ending',showEnding])}else if(pass&&level===5)desc+=' Complete all six routes successfully to unlock the ending.';buttons.push(['Main menu',showCafe]);panel(pass?(level===5?'YOU MADE IT!':'DELIVERY COMPLETE'):'DELIVERY FAILED',desc,buttons)}
-
-// Physics uses a fixed 120 Hz step; visual settings never affect spill or input.
-function newEvent(){
- let l=levels[level],r=Math.random(),chained=chain!==null;
- let kind=chained?chain:(r<.36?'BRAKE!':r<.72?'FULL THROTTLE!':r<.92?'POTHOLE!':'ROUGH ROAD!');chain=null;
- let bump=kind==='POTHOLE!'||kind==='ROUGH ROAD!',sign=kind==='BRAKE!'?-1:1;
- let warn=Math.max(.28,.72-level*.075);if(chained)warn=Math.max(.2,warn*.7);
- event={kind,start:t+warn,dur:bump?(kind==='ROUGH ROAD!'?1.0:.72):.8+Math.random()*1.05,force:sign*l[2]*(.8+Math.random()*.28)*1.2};
- let gap=.55+Math.random()*Math.max(.35,1.3-level*.18);
- if(!chained&&level>=1&&Math.random()<.14+level*.11){chain=bump?(Math.random()<.5?'BRAKE!':'FULL THROTTLE!'):(Math.random()<.6?'POTHOLE!':kind==='BRAKE!'?'FULL THROTTLE!':'BRAKE!');gap=.06+Math.random()*.16;}
- next=event.start+event.dur+gap;soundscape.warning();
-}
-function step(dt){if(state!=='play')return;t+=dt;if(t>=next)newEvent();let target=0;ay=0;
- if(event&&t>=event.start&&t<event.start+event.dur){let u=(t-event.start)/event.dur;let envelope=Math.min(1,u*11,(1-u)*11);if(event.kind==='POTHOLE!'||event.kind==='ROUGH ROAD!'){ay=Math.sin(u*Math.PI*4)*levels[level][3]*3.15*envelope;target=event.force*.25*envelope}else target=event.force*envelope}
- ax+=(target-ax)*Math.min(1,dt*10);speed=clamp(speed+ax*dt,3,23);dist+=speed*dt;
- // Softly follow the physical velocity at a deliberately lower visual scale.
- visualSpeed+=(speed-visualSpeed)*(1-Math.exp(-dt*2.3));scroll+=visualSpeed*dt*[4.2,1.5,0][motion];
- let dir=(keys.right?1:0)-(keys.left?1:0);// Brief corrections retain the v0.6 response; a held key progressively tips to 60 degrees.
- if(dir!==lastDir){hold=0;lastDir=dir}if(dir)hold+=dt;else hold=0;let desired=dir*(.73+.32*clamp((hold-.42)/.50,0,1));omega+=(19*(desired-theta)-7.5*omega)*dt;theta+=omega*dt;
- let effective=Math.atan2(-ax*1.22,Math.max(2,G+ay));let equilibrium=clamp(effective-theta,-1.15,1.15);sv+=(28*(equilibrium-slosh)-3.2*sv-1.1*omega)*dt;slosh=clamp(slosh+sv*dt,-1.25,1.25);
- let h=H*fill0*amount;let rise=Math.abs(Math.tan(slosh))*W/2;let splash=Math.abs(ay)*3.2+Math.abs(sv)*4;let overflow=Math.max(0,h+rise+splash-H);
- // Deep tilt: estimate the liquid volume below the lower rim using a rectangular cross section.
- // Blend in the geometric correction beyond the normal control range to retain the existing balance.
- let slope=Math.abs(Math.tan(slosh)),rim=Math.max(0,H-splash);let capacity=slope*W<=rim?rim-slope*W/2:rim*rim/(2*slope*W);let deep=clamp((Math.abs(theta)-.78)/.20,0,1);overflow+=(Math.max(0,h-capacity)-overflow)*deep;
- if(overflow>0&&amount>0){let loss=Math.min(amount,overflow*.0042*dt);amount-=loss;if(t-lastSpill>.075){lastSpill=t;let side=slosh>0?-1:1;let lip=cupPoint(side<0?.22:.70,.19);drops.push({x:lip[0],y:lip[1],vx:side*(60+Math.random()*100),vy:-80-Math.random()*120,life:1,size:1+deep*Math.min(1,overflow/30)*.85});soundscape.spill(side)}}
- for(let d of drops){d.x+=d.vx*dt;d.y+=d.vy*dt;d.vy+=500*dt;d.life-=dt}drops=drops.filter(d=>d.life>0);if(amount<=.001||t>=levels[level][1])finish()}
-
-const images={};for(const [name,file] of Object.entries({interior:'interior.png',street:'street.jpg',cup:'hand-empty.png',liquid:'coffee.jpg',font:'hud-lettering.png'})){const im=new Image();im.src='assets/'+file;images[name]=im}
-// Route-specific art only. Original physics and scroll scale remain unchanged.
-const routeArt=[{street:images.street,interior:images.interior,cup:images.cup,tint:'rgba(36,22,26,.18)'}];
-for(let i=2;i<=6;i++){let art={};for(const [key,file] of Object.entries({street:`street-${i}.jpg`,interior:`interior-${i}.webp`,cup:`hand-empty-${i}.webp`})){let im=new Image();im.src='assets/'+file;art[key]=im}art.tint=['rgba(20,24,42,.13)','rgba(92,70,38,.035)','rgba(40,60,72,.09)','rgba(10,18,36,.16)','rgba(28,20,34,.12)'][i-2];routeArt.push(art)}
-function routeImage(key){let im=routeArt[level][key];return ready(im)?im:images[key]}
-const glyphs={"A": [0, 0, 85, 100, 33.46875], "B": [85, 0, 85, 100, 33.28125], "C": [170, 0, 85, 100, 33.09375], "D": [255, 0, 85, 100, 35.515625], "E": [340, 0, 85, 100, 25.34375], "F": [425, 0, 85, 100, 23.484375], "G": [510, 0, 85, 100, 33.34375], "H": [595, 0, 85, 100, 33.40625], "I": [680, 0, 85, 100, 14.34375], "J": [765, 0, 85, 100, 29.890625], "K": [850, 0, 85, 100, 33.921875], "L": [935, 0, 85, 100, 24.3125], "M": [0, 100, 85, 100, 51.640625], "N": [85, 100, 85, 100, 41.859375], "O": [170, 100, 85, 100, 33.796875], "P": [255, 100, 85, 100, 31.875], "Q": [340, 100, 85, 100, 34.296875], "R": [425, 100, 85, 100, 34.046875], "S": [510, 100, 85, 100, 34.5625], "T": [595, 100, 85, 100, 29.828125], "U": [680, 100, 85, 100, 33.40625], "V": [765, 100, 85, 100, 35.015625], "W": [850, 100, 85, 100, 48.828125], "X": [935, 100, 85, 100, 35.96875], "Y": [0, 200, 85, 100, 33.859375], "Z": [85, 200, 85, 100, 29.375], "a": [170, 200, 85, 100, 32.515625], "b": [255, 200, 85, 100, 31.9375], "c": [340, 200, 85, 100, 30.96875], "d": [425, 200, 85, 100, 33.59375], "e": [510, 200, 85, 100, 25.40625], "f": [595, 200, 85, 100, 22.90625], "g": [680, 200, 85, 100, 32.25], "h": [765, 200, 85, 100, 33.15625], "i": [850, 200, 85, 100, 13.5625], "j": [935, 200, 85, 100, 28.609375], "k": [0, 300, 85, 100, 33.53125], "l": [85, 300, 85, 100, 22.59375], "m": [170, 300, 85, 100, 53.0625], "n": [255, 300, 85, 100, 35.78125], "o": [340, 300, 85, 100, 35.265625], "p": [425, 300, 85, 100, 32.453125], "q": [510, 300, 85, 100, 32.515625], "r": [595, 300, 85, 100, 34.046875], "s": [680, 300, 85, 100, 32.765625], "t": [765, 300, 85, 100, 29.375], "u": [850, 300, 85, 100, 33.34375], "v": [935, 300, 85, 100, 34.6875], "w": [0, 400, 85, 100, 55.296875], "x": [85, 400, 85, 100, 39.875], "y": [170, 400, 85, 100, 33.53125], "z": [255, 400, 85, 100, 31.875], "0": [340, 400, 85, 100, 31.9375], "1": [425, 400, 85, 100, 19.453125], "2": [510, 400, 85, 100, 32.0625], "3": [595, 400, 85, 100, 33.09375], "4": [680, 400, 85, 100, 33.21875], "5": [765, 400, 85, 100, 31.484375], "6": [850, 400, 85, 100, 33.40625], "7": [935, 400, 85, 100, 29.765625], "8": [0, 500, 85, 100, 33.65625], "9": [85, 500, 85, 100, 31.296875], " ": [170, 500, 85, 100, 20.546875], ".": [255, 500, 85, 100, 13.625], "%": [340, 500, 85, 100, 69.3125], "/": [425, 500, 85, 100, 23.234375], "-": [510, 500, 85, 100, 29.25], "!": [595, 500, 85, 100, 13.828125], "?": [680, 500, 85, 100, 29.828125], ":": [765, 500, 85, 100, 13.5], "+": [850, 500, 85, 100, 29.953125], "\u2192": [935, 500, 85, 100, 30.203125], "\u00b2": [0, 600, 85, 100, 16.0], "\u2019": [85, 600, 85, 100, 12.859375]};function ready(i){return i.complete&&i.naturalWidth>0}const CW=900,CH=506;
-function text(s,a,b,size=18,color='#ebdab9',align='left'){s=String(s).toUpperCase();let scale=size/64;let width=[...s].reduce((n,ch)=>n+(glyphs[ch]?.[4]||18)*scale,0);let left=align==='right'?a-width:align==='center'?a-width/2:a;if(!ready(images.font)){x.fillStyle=color;x.font=`${size}px Georgia`;x.textAlign=align;x.fillText(s,a,b+size*.8);return}x.save();x.shadowColor='#1c120c';x.shadowBlur=5;x.shadowOffsetY=2;for(const ch of s){let g=glyphs[ch];if(g){if(ch!==' ')x.drawImage(images.font,g[0],g[1],g[2],g[3],left-4*scale,b-5*scale,g[2]*scale,g[3]*scale);left+=g[4]*scale}else left+=18*scale}x.restore()}
-const cavity=[[.211,.181],[.23,.137],[.276,.108],[.34,.091],[.42,.079],[.50,.079],[.58,.088],[.64,.107],[.683,.138],[.706,.171],[.705,.195],[.684,.224],[.646,.248],[.59,.270],[.52,.286],[.456,.290],[.39,.284],[.33,.271],[.28,.251],[.242,.225],[.218,.202]];
-const spriteW=460,spriteH=460*1312/1199,originX=-210,originY=-245;function cupPoint(u,v){const a=originX+u*spriteW,b=originY+v*spriteH;return [450+a*Math.cos(theta)-b*Math.sin(theta),350+Math.sin(t*23)*ay*[1.0,.55,0][motion]+a*Math.sin(theta)+b*Math.cos(theta)]}
-function drawStreet(){let im=routeImage('street');if(!ready(im))return;let ht=294,wd=ht*im.width/im.height;for(let side=0;side<2;side++){x.save();x.beginPath();x.rect(side*450,0,450,CH);x.clip();let delta=(scroll*.58*(side?1:-1)+(side?wd*.43:wd*.15))%wd;let pos=((delta%wd)+wd)%wd-wd;for(let i=0;i<3;i++)x.drawImage(im,pos+i*wd,93,wd,ht);x.restore()} // Slight dusk tint keeps the windows in the same palette.
-x.fillStyle=routeArt[level].tint;x.fillRect(0,0,CW,CH)}
-function drawCup(){let cup=routeImage('cup');if(!ready(cup))return;x.save();x.translate(450,350+Math.sin(t*23)*ay*[1.0,.55,0][motion]);x.rotate(theta);x.drawImage(cup,originX,originY,spriteW,spriteH);
-if(amount>.001){x.save();x.translate(originX,originY);x.scale(spriteW,spriteH);x.beginPath();cavity.forEach(([u,v],i)=>i?x.lineTo(u,v):x.moveTo(u,v));x.closePath();x.clip();let fill=clamp(amount,0,1);let cx=.458,cy=.271-.053*fill,rx=.07+.17*Math.sqrt(fill),ry=.013+.067*Math.sqrt(fill);let angle=clamp(slosh*(.55+.35*clamp((Math.abs(theta)-.78)/.20,0,1)),-1.15,1.15);x.translate(cx,cy);x.rotate(angle);x.beginPath();x.ellipse(0,0,rx,ry,0,0,Math.PI*2);x.save();x.clip();x.fillStyle='#352014';x.fillRect(-rx,-ry,rx*2,ry*2);if(ready(images.liquid))x.drawImage(images.liquid,-rx,-ry,rx*2,ry*2);let grd=x.createLinearGradient(0,-ry,0,ry);grd.addColorStop(0,'rgba(29,14,7,.4)');grd.addColorStop(.6,'rgba(0,0,0,0)');grd.addColorStop(1,'rgba(45,22,10,.3)');x.fillStyle=grd;x.fillRect(-rx,-ry,rx*2,ry*2);x.restore();x.strokeStyle='#b18051';x.lineWidth=.0026;x.globalAlpha=.7;x.beginPath();x.ellipse(0,0,rx*.97,ry*.92,0,Math.PI,2*Math.PI);x.stroke();x.globalAlpha=1;for(let j=0;j<20;j++){let a=Math.PI+j/19*Math.PI;let u=Math.cos(a)*rx*.91,v=Math.sin(a)*ry*.84;x.fillStyle=j%3?'#a16d3f':'#d0a16b';x.globalAlpha=.45;x.beginPath();x.ellipse(u,v,.0028+(j%3)*.001,.0018,0,0,Math.PI*2);x.fill()}x.restore();}x.restore()}
-function draw(){x.clearRect(0,0,CW,CH);x.fillStyle='#211b17';x.fillRect(0,0,CW,CH);x.save();let j=Math.sin(t*31)*ay*[.13,.035,0][motion];x.translate(CW/2,CH/2+j);x.scale(1.017,1.017);x.translate(-CW/2,-CH/2);drawStreet();let interior=routeImage('interior');if(ready(interior))x.drawImage(interior,0,0,CW,CH);x.restore();drawCup();for(let d of drops){x.save();x.translate(d.x,d.y);x.rotate(Math.atan2(d.vy,d.vx)+Math.PI/2);x.globalAlpha=Math.min(1,d.life*2);x.fillStyle='#49291a';x.beginPath();x.ellipse(0,0,3*(d.size||1),6*(d.size||1),0,0,7);x.fill();x.strokeStyle='#ba8652';x.lineWidth=.8;x.beginPath();x.moveTo(-1,-4);x.lineTo(-2,0);x.stroke();x.restore()}
-let top=x.createLinearGradient(0,0,0,105);top.addColorStop(0,'rgba(18,13,10,.65)');top.addColorStop(1,'rgba(18,13,10,0)');x.fillStyle=top;x.fillRect(0,0,CW,105);let bottom=x.createLinearGradient(0,CH-95,0,CH);bottom.addColorStop(0,'rgba(18,13,10,0)');bottom.addColorStop(1,'rgba(18,13,10,.65)');x.fillStyle=bottom;x.fillRect(0,CH-95,CW,95);
-text(`ROUTE 0${level+1}`,25,23,23);text(levels[level][0],25,51,16);text('COFFEE LEFT',875,22,19,undefined,'right');text(`${Math.round(amount*100)}%`,875,48,43,undefined,'right');x.strokeStyle='#d2b78c';x.lineWidth=1.5;x.globalAlpha=.4;x.beginPath();x.moveTo(776,100);x.quadraticCurveTo(827,98,875,100);x.stroke();x.globalAlpha=1;x.beginPath();x.moveTo(776,100);x.lineTo(776+99*amount,100);x.stroke();
-if(event&&t<event.start+event.dur){let warning=t<event.start;let s=warning?'INCOMING: '+event.kind:event.kind;text(s,450,70,warning?18:31,undefined,'center')}
-text(`${Math.round(speed*3.6)} KM/H`,25,CH-78,30);text(`ACCEL ${ax.toFixed(1)} M/S²`,25,CH-43,15);text('TO CAMPUS',875,CH-78,18,undefined,'right');text(`${Math.max(0,Math.ceil(levels[level][1]-t))} S LEFT`,875,CH-53,26,undefined,'right');let progress=clamp(t/levels[level][1],0,1);x.strokeStyle='#e0c6a0';x.lineWidth=1.3;x.globalAlpha=.25;x.beginPath();x.moveTo(25,CH-14);x.lineTo(875,CH-14);x.stroke();x.globalAlpha=1;x.beginPath();x.moveTo(25,CH-14);x.lineTo(25+850*progress,CH-14);x.stroke();
-$('route').textContent=`Route ${level+1}/6 · ${levels[level][0]}`;$('coffee').textContent=`Coffee ${Math.round(amount*100)}%`;$('accel').textContent=`Acceleration ${ax.toFixed(1)} m/s²`;$('distance').textContent=`Distance ${Math.round(dist)} m`}
-let monitorOn=false,monitorClock=0;function updatePhysics(){if(!monitorOn)return;const gy=Math.max(2,G+ay),gx=-ax*1.22,deg=180/Math.PI;const values={pv:speed.toFixed(2),pax:ax.toFixed(2),pay:ay.toFixed(2),pdist:dist.toFixed(1),ptheta:(theta*deg).toFixed(1),pslosh:(slosh*deg).toFixed(1),pg:Math.hypot(gx,gy).toFixed(2),pangle:(Math.atan2(gx,gy)*deg).toFixed(1),pke:(.5*speed*speed).toFixed(2),pcoffee:(amount*100).toFixed(1)};for(const [id,value] of Object.entries(values))$(id).textContent=value}
-function togglePhysics(){monitorOn=!monitorOn;$('physicsMonitor').hidden=!monitorOn;$('physicsToggle').textContent='Physics: '+(monitorOn?'on':'off');$('physicsToggle').setAttribute('aria-expanded',String(monitorOn));updatePhysics()}
-$('physicsToggle').onclick=togglePhysics;
-let last=performance.now(),acc=0;function loop(now){let dt=Math.min(.05,(now-last)/1000);last=now;acc+=dt;while(acc>=1/120){step(1/120);acc-=1/120}soundscape.update(dt);draw();monitorClock+=dt;if(monitorClock>=.1){monitorClock=0;updatePhysics()}requestAnimationFrame(loop)}function pause(){if(state==='play'){state='pause';panel('PAUSED','Your coffee can wait.',[['Resume',()=>{state='play';$('panel').hidden=true;keys={}}],['Restart',()=>start(level)],['Main menu',showCafe]])}else if(state==='pause'){state='play';$('panel').hidden=true;keys={}}}window.addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(state==='menu'){if(k==='escape'&&!$('cafe-dialog').hidden)closeCafeDialog();return}if(['a','d','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(k==='a'||k==='arrowleft')keys.left=true;if(k==='d'||k==='arrowright')keys.right=true;if(!e.repeat&&k==='r'&&state!=='menu')start(level);if(!e.repeat&&k==='p')pause();if(!e.repeat&&k==='i')togglePhysics()});window.addEventListener('keyup',e=>{let k=e.key.toLowerCase();if(k==='a'||k==='arrowleft')keys.left=false;if(k==='d'||k==='arrowright')keys.right=false});window.addEventListener('blur',()=>{keys={};if(state==='play')pause()});for(let [id,k] of [['left','left'],['right','right']]){let b=$(id);b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys[k]=true};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys[k]=false}function updateMotion(){$('motion').textContent='Motion: '+motionModes[motion];try{localStorage.setItem('coffee-motion-v03',motionModes[motion])}catch{}}$('motion').onclick=()=>{motion=(motion+1)%motionModes.length;updateMotion()};updateMotion();function updateSound(){ $('mute').textContent='Sound: '+(muted?'off':'on');$('mute').setAttribute('aria-pressed',String(!muted));try{localStorage.setItem('coffee-sound-v04',muted?'off':'on')}catch{} } $('mute').onclick=()=>{muted=!muted;updateSound();if(!muted)soundscape.unlock()};updateSound();routes();
-let cafeTrigger=null;
-function hasProgress(){return save.unlocked>0||save.best.some(v=>v!=null)}
-function closeCafeDialog(){$('cafe-dialog').hidden=true;if(cafeTrigger)cafeTrigger.focus()}
-function cafePanel(title,desc,buttons){if($('cafe-dialog').hidden)cafeTrigger=document.activeElement;$('menuTitle').textContent=title;$('menuDesc').textContent=desc;$('menuActions').replaceChildren();for(const [label,fn] of buttons){const b=document.createElement('button');b.textContent=label;b.onclick=fn;$('menuActions').append(b)}$('cafe-dialog').hidden=false;$('menuActions').firstElementChild?.focus()}
-function showCafe(){state='menu';keys={};$('game').hidden=true;$('panel').hidden=true;$('cafe').hidden=false;$('cafe-dialog').hidden=true;$('menuContinue').disabled=!hasProgress();$('menuStart').focus({preventScroll:true});$('menuStart').blur()}
-function cafeSettings(){cafePanel('Settings','Choose the motion level that feels comfortable. These settings do not change the coffee physics.',[[`Motion: ${motionModes[motion]}`,()=>{motion=(motion+1)%motionModes.length;updateMotion();cafeSettings()}],[`Sound: ${muted?'off':'on'}`,()=>{muted=!muted;updateSound();if(!muted)soundscape.unlock();cafeSettings()}],['Back',closeCafeDialog]])}
-$('menuStart').onclick=()=>cafePanel('One coffee. One crush.','Get the coffee to campus with at least 40% remaining. Tilt left or right to counter the slosh. Six routes await.\nStarting at Route 1 does not erase your records.',[['Begin journey',()=>start(0)],['Back',closeCafeDialog]]);
-$('menuContinue').onclick=()=>{if(campaignScore()===null){start(clamp(save.unlocked,0,levels.length-1));return}cafePanel('Journey complete',`Overall delivery: ${percent(campaignScore())} · Grade ${grade(campaignScore())}. Replay any route to improve your ending.`,[['View ending',()=>{start(5);showEnding()}],['Continue journey',()=>start(5)],['Back',closeCafeDialog]])};
-$('menuSettings').onclick=cafeSettings;
-$('menuCredits').onclick=()=>cafePanel('Credits',"Don't Spill the Coffee!\nConcept, art direction and playtesting: game creator\nIllustrations and programming assistance: ChatGPT\nTypography: Hogfish DEMO (license pending)\nMade for the love of coffee, physics and the Filipino commute.",[['Back',closeCafeDialog]]);
-$('menuBack').onclick=()=>{if(state==='play')pause();cafeReturn()};function cafeReturn(){if(state==='end'){showCafe();return}panel('RETURN TO MAIN MENU?','Your completed routes and best grades are saved. This unfinished delivery will restart.',[['Main menu',showCafe],['Resume',()=>{state='play';keys={};$('panel').hidden=true}]])}
-$('cafe-dialog').addEventListener('keydown',e=>{if(e.key!=='Tab')return;const bs=[...$('menuActions').querySelectorAll('button')];if(!bs.length)return;if(e.shiftKey&&document.activeElement===bs[0]){e.preventDefault();bs.at(-1).focus()}else if(!e.shiftKey&&document.activeElement===bs.at(-1)){e.preventDefault();bs[0].focus()}});
-showCafe();requestAnimationFrame(loop);
-</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Don't Spill the Coffee! — V0.7</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <section id="cafe" aria-label="Main menu">
+      <img src="assets/menu.jpg" alt="Don't Spill the Coffee! A café at dusk, a coffee cup, and a note: See you at campus. Don't forget my coffee.">
+      <button class="menu-hit" id="menuStart" aria-label="Start Journey" title="Start Journey"></button>
+      <button class="menu-hit" id="menuContinue" aria-label="Continue Journey" title="Continue Journey"></button>
+      <button class="menu-hit" id="menuSettings" aria-label="Settings" title="Settings"></button>
+      <button class="menu-hit" id="menuCredits" aria-label="Credits" title="Credits"></button>
+      <div id="cafe-dialog" hidden>
+        <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+          <h2 id="menuTitle"></h2>
+          <p id="menuDesc"></p>
+          <div id="menuActions"></div>
+        </div>
+      </div>
+    </section>
+    <main id="game" hidden>
+      <header>
+        <h1>Don't Spill the Coffee!</h1>
+        <div class="settings">
+          <button id="menuBack">Main menu</button>
+          <button id="motion" title="Change scenery movement and camera shake">Motion: gentle</button>
+          <button id="mute">Sound: on</button>
+          <button id="physicsToggle" aria-controls="physicsMonitor" aria-expanded="false">Physics: off</button>
+        </div>
+      </header>
+      <div class="stats" aria-live="off">
+        <span id="route"></span>
+        <span id="coffee"></span>
+        <span id="accel"></span>
+        <span id="distance"></span>
+      </div>
+      <div class="stage">
+        <canvas id="c" width="900" height="506" aria-label="Coffee cup inside a moving jeepney"></canvas>
+        <div id="panel">
+          <div class="sheet">
+            <h2 id="pt"></h2>
+            <p id="pd"></p>
+            <div id="endingScores" hidden></div>
+            <div id="actions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button id="left">← A</button>
+        <span class="small">Tilt against the slosh · R retry · P pause</span>
+        <button id="right">D →</button>
+      </div>
+      <div id="routes"></div>
+      <section id="physicsMonitor" hidden aria-label="Live physics monitor">
+        <h2>Physics monitor · Units 1 &amp; 2</h2>
+        <p>Live values from the simulation. Press I or use the Physics button to show or hide this panel.</p>
+        <dl class="physics-grid">
+          <div>
+            <dt>Speed</dt>
+            <dd id="pv">—</dd>
+            <small>m/s · v</small>
+          </div>
+          <div>
+            <dt>Horizontal acceleration</dt>
+            <dd id="pax">—</dd>
+            <small>m/s² · aₓ</small>
+          </div>
+          <div>
+            <dt>Vertical acceleration</dt>
+            <dd id="pay">—</dd>
+            <small>m/s² · aᵧ (road input)</small>
+          </div>
+          <div>
+            <dt>Distance traveled</dt>
+            <dd id="pdist">—</dd>
+            <small>m · Σ v Δt</small>
+          </div>
+          <div>
+            <dt>Cup tilt</dt>
+            <dd id="ptheta">—</dd>
+            <small>° · θ</small>
+          </div>
+          <div>
+            <dt>Liquid slosh</dt>
+            <dd id="pslosh">—</dd>
+            <small>° · relative to cup</small>
+          </div>
+          <div>
+            <dt>Effective gravity</dt>
+            <dd id="pg">—</dd>
+            <small>m/s² · simplified model</small>
+          </div>
+          <div>
+            <dt>Effective gravity tilt</dt>
+            <dd id="pangle">—</dd>
+            <small>° · relative to world vertical</small>
+          </div>
+          <div>
+            <dt>Kinetic energy per kg</dt>
+            <dd id="pke">—</dd>
+            <small>J/kg · v² / 2 (jeepney)</small>
+          </div>
+          <div>
+            <dt>Coffee remaining</dt>
+            <dd id="pcoffee">—</dd>
+            <small>% · remaining fraction</small>
+          </div>
+        </dl>
+        <p class="physics-note">Unit 1: Kinematics, inertia, gravity and liquid oscillation. g = 9.81 m/s². Unit 2: Kinetic energy per unit mass is a derived teaching value, not a force in the game. Effective gravity uses the game’s tuned horizontal response (1.22 × aₓ) and a minimum downward component of 2 m/s². The coffee is a simplified slosh model, not a full fluid simulation.</p>
+      </section>
+    </main>
+    <!-- Ordered classic scripts preserve direct file:// loading. Keep main last. -->
+    <script src="js/config.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/assets.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/physics.js"></script>
+    <script src="js/render.js"></script>
+    <script src="js/endings.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
