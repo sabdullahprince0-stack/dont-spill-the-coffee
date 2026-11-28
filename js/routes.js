@@ -2,9 +2,12 @@
 (function (game) {
     'use strict';
     const sim = game.state;
+    const neighborhood = new Image();
+    neighborhood.src = 'assets/route01-custom.png';
     const levels = [['The neighborhood', 32, 2.8, 0.45], ['City traffic', 38, 4.2, .7], ['Pothole province', 42, 4.8, 1.5], ['Mountain road', 46, 5.8, 1.25], ['Highway madness', 48, 7, 1.0], ['The jeepney final boss', 55, 8.2, 2.1]];
     const routeArt = [{
-            street: game.assets.images.street,
+            street: neighborhood,
+            panorama: true,
             interior: game.assets.images.interior,
             cup: game.assets.images.cup,
             tint: 'rgba(36,22,26,.18)'

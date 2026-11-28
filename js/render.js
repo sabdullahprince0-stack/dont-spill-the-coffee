@@ -42,6 +42,11 @@
         let im = game.routes.imageFor('street');
         if (!game.assets.ready(im))
             return;
+        // Use the original renderer (including its tint) while the PNG is unavailable.
+        if (game.routes.art[sim.level].panorama && im === game.routes.art[sim.level].street) {
+            drawPanorama(im);
+            return;
+        }
         let ht = 294, wd = ht * im.width / im.height;
         for (let side = 0; side < 2; side++) {
             x.save();
@@ -57,6 +62,52 @@
         // Slight dusk tint keeps the windows in the same palette.
         x.fillStyle = game.routes.art[sim.level].tint;
         x.fillRect(0, 0, CW, CH);
+    }
+    let panoramaImage, panoramaTile, panoramaPattern;
+    function drawPanorama(im) {
+        if (panoramaImage !== im) {
+            // The supplied edges are different. Blend only a narrow end/head overlap
+            // once in memory; keep the source file, colors and uniform scale intact.
+            const overlap = Math.round(im.naturalHeight * .16);
+            const period = im.naturalWidth - overlap;
+            panoramaTile = document.createElement('canvas');
+            panoramaTile.width = period;
+            panoramaTile.height = im.naturalHeight;
+            const tile = panoramaTile.getContext('2d');
+            tile.drawImage(im, overlap, 0, period, im.naturalHeight, 0, 0, period, im.naturalHeight);
+            const head = document.createElement('canvas');
+            head.width = overlap;
+            head.height = im.naturalHeight;
+            const blend = head.getContext('2d');
+            blend.drawImage(im, 0, 0);
+            blend.globalCompositeOperation = 'destination-in';
+            const fade = blend.createLinearGradient(0, 0, overlap, 0);
+            fade.addColorStop(0, 'rgba(0,0,0,0)');
+            fade.addColorStop(1, 'rgba(0,0,0,1)');
+            blend.fillStyle = fade;
+            blend.fillRect(0, 0, overlap, im.naturalHeight);
+            tile.drawImage(head, period - overlap, 0);
+            panoramaPattern = x.createPattern(panoramaTile, 'repeat-x');
+            panoramaImage = im;
+        }
+        const scale = 294 / im.naturalHeight;
+        const width = panoramaTile.width * scale;
+        for (let side = 0; side < 2; side++) {
+            x.save();
+            x.beginPath();
+            x.rect(side * 450, 0, 450, CH);
+            x.clip();
+            // Same directions, pixel speed and scale; raise this artwork's lower
+            // skyline so the storefronts and curb sit naturally above the sill.
+            const delta = sim.scroll * .58 * (side ? 1 : -1) + width * (side ? .43 : .15);
+            const pos = ((delta % width) + width) % width - width;
+            x.translate(pos, 40);
+            x.scale(scale, scale);
+            x.fillStyle = panoramaPattern;
+            // A repeating pattern avoids subpixel gaps between separate drawImage tiles.
+            x.fillRect(-pos / scale, 0, CW / scale, im.naturalHeight);
+            x.restore();
+        }
     }
     function drawCup() {
         let cup = game.routes.imageFor('cup');

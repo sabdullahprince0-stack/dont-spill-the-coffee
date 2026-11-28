@@ -26,6 +26,8 @@ Open `index.html` in Chrome or Edge, or open the folder in VS Code and use Live 
 
 Sound and motion settings are available in the menu and during gameplay. Gentle, Minimal and Still motion modes do not change the simulation difficulty.
 
+Route 01 uses `assets/route01-custom.png`, scaled uniformly behind the jeepney windows with a narrow blended loop overlap created in memory. The supplied PNG stays unchanged, with no additional scenery tint or mirroring. The original `assets/street.jpg` remains the fallback while the panorama is loading or if it cannot load. The other routes keep their existing artwork and lighting.
+
 ## Routes
 
 | Route | Environment | Duration |
