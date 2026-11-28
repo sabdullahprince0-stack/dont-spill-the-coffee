@@ -26,6 +26,10 @@ Open `index.html` in Chrome or Edge, or open the folder in VS Code and use Live 
 
 Sound and motion settings are available in the menu and during gameplay. Gentle, Minimal and Still motion modes do not change the simulation difficulty.
 
+Exterior scenery follows the simulated jeepney velocity at the fixed 120 Hz timestep, so full throttle speeds up the scenery and braking slows it down. Gentle and Minimal retain their existing scrolling scales; Still stops scenery movement. Potholes produce a small, damped exterior movement using the existing vertical acceleration, separately from the interior's camera shake. This presentation state lives in the renderer and never feeds back into gameplay. The renderer stops scrolling at zero velocity; normal gameplay keeps its existing minimum speed of 3 m/s.
+
+Active full-throttle events target 1.9 times the cruising visual rate at the same vehicle velocity; braking targets 0.45 times. Only the visual gain is eased, with a 0.1 s response time and a gentler return to cruising. Warnings do not activate the gain. Scrolling stays continuous, with comfort caps of approximately 78 canvas pixels/s in Gentle and 28 in Minimal; Still remains motionless. Physics, camera shake, cup behavior and HUD values are unchanged. See [measured event speeds](docs/scenery-response-review.md).
+
 Route 01 uses `assets/route01-custom.png`, scaled uniformly behind the jeepney windows with a narrow blended loop overlap created in memory. The supplied PNG stays unchanged, with no additional scenery tint or mirroring. The original `assets/street.jpg` remains the fallback while the panorama is loading or if it cannot load. The other routes keep their existing artwork and lighting.
 
 ## Routes
@@ -69,7 +73,7 @@ V0.7 is separated into plain HTML, CSS and ordered classic scripts. The scripts 
 | File | Responsibility |
 | --- | --- |
 | `index.html` | Markup, accessible labels, existing DOM IDs and local stylesheet/script links |
-| `assets/` | Unchanged approved artwork and HUD metadata |
+| `assets/` | Approved artwork, Route 01 custom panorama and HUD metadata |
 | `css/styles.css` | All styles, including responsive layout |
 | `js/config.js` | Namespace, physical/model constants, motion modes and clamp helper |
 | `js/state.js` | Shared state, preferences, save migration and progress persistence |
@@ -81,7 +85,7 @@ V0.7 is separated into plain HTML, CSS and ordered classic scripts. The scripts 
 | `js/endings.js` | Grade thresholds, precise campaign average, results and dialogue |
 | `js/ui.js` | Menus, route buttons, settings, monitor and input wiring |
 | `js/main.js` | Initialization, route reset and animation loop |
-| `tools/` | Development-only original-versus-refactor checks using Node built-ins |
+| `tools/` | Development-only browser, scenery and physics checks using Node built-ins |
 
 Route-specific image creation stays with its route mapping. Droplet spawn positions still use the renderer's cup geometry, as in V0.7. Cross-file callbacks run after all scripts load. The HUD metadata remains embedded in JavaScript so local JSON loading is unnecessary. See [AGENTS.md](AGENTS.md) for invariants and [the refactor review](docs/refactor-review.md) for the inventory and validation evidence.
 
@@ -93,6 +97,12 @@ node tools/browser-check.mjs
 ```
 
 The first compares against the original V0.7 source at Git commit `0762552`, including seeded physics replays and asset checksums. The second uses an installed Chrome with a temporary profile to compare both versions over `file://`; pass an executable path as its first argument to use another Chrome/Edge installation. Browser screenshots and observations are written to a temporary folder printed by the command. These tools do not read or change your regular browser saves.
+
+For the Route 01 panorama, run `node tools/panorama-check.mjs` instead. The older refactor checks require the original Route 01 rendering. The panorama check compares seeded physics and all original asset checksums, verifies Routes 02–06 and the fallback against the original pixels, and tests offline loading, responsive framing, both scroll boundaries and motion settings. It saves actual gameplay screenshots, observations and a playable sequence of live transition frames in the printed temporary folder. The transition review starts the scenery near its wrap boundary; gameplay then runs through the transition with the normal animation loop. It uses an isolated Chrome profile and requires no npm packages.
+
+Run `node tools/scenery-check.mjs` for velocity-responsive motion checks. It tests frame-rate independence at 20, 30, 60, 120 and 144 FPS plus irregular frame timing, pause/restart, zero velocity, bump damping and both loop boundaries across all six routes. The printed temporary folder contains a live offline review copy at `live/index.html`, with route selection, replayable full-throttle/brake/pothole events and the normal motion controls. Its `demo.html` provides a timeline of captured Chrome frames for closer inspection. Event timing and extra controls exist only in the review artifacts. Both tools leave the production physics unchanged; artwork pixel comparisons use matching scroll and bump coordinates to isolate the artwork from its new motion.
+
+`node tools/scenery-event-check.mjs` measures naturally generated events across all routes, all motion settings and two seeds. It checks throttle/brake ratios and comfort caps, and writes before/after measurements to a temporary JSON file. Its default baseline is the prior velocity-only mapping; pass `--baseline path/to/previous/render.js` to execute a saved previous renderer alongside the current one and compare every simulation state and RNG call.
 
 ## Contributing
 

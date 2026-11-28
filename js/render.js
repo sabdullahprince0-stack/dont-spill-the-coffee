@@ -4,6 +4,31 @@
     const sim = game.state;
     const { CW, CH, clamp } = game.config;
     const $ = id => document.getElementById(id), c = $('c'), x = c.getContext('2d');
+    // Presentation only: never write these values back into the physical model.
+    const scenery = { scroll: 0, bump: 0, driveGain: 1, scrollRate: 0 };
+    function resetScenery() {
+        scenery.scroll = scenery.bump = 0;
+        scenery.driveGain = 1;
+        scenery.scrollRate = 0;
+    }
+    function updateScenery(dt) {
+        if (sim.state !== 'play' || dt <= 0)
+            return;
+        // Short events produce small physical velocity changes. Emphasize their
+        // driving condition visually, only once the warning interval has ended.
+        const active = sim.event && sim.t >= sim.event.start && sim.t < sim.event.start + sim.event.dur;
+        const kind = active ? sim.event.kind : '';
+        const gain = kind === 'FULL THROTTLE!' ? 1.9 : kind === 'BRAKE!' ? .45 : 1;
+        scenery.driveGain += (gain - scenery.driveGain) * (1 - Math.exp(-dt * (gain === 1 ? 6 : 10)));
+        // Keep accumulating phase; never multiply the existing displacement by
+        // the gain. Cap presentation speed at ~78 px/s Gentle, ~28 px/s Minimal
+        // (the window renderer applies another .58 factor). Still remains zero.
+        scenery.scrollRate = Math.min(32, Math.max(0, sim.speed) * scenery.driveGain) * [4.2, 1.5, 0][sim.motion];
+        scenery.scroll += scenery.scrollRate * dt;
+        const limit = [1.25, .35, 0][sim.motion];
+        const target = clamp(sim.ay * [.18, .045, 0][sim.motion], -limit, limit);
+        scenery.bump = clamp(scenery.bump + (target - scenery.bump) * (1 - Math.exp(-12 * dt)), -limit, limit);
+    }
     const cavity = [[.211, .181], [.23, .137], [.276, .108], [.34, .091], [.42, .079], [.50, .079], [.58, .088], [.64, .107], [.683, .138], [.706, .171], [.705, .195], [.684, .224], [.646, .248], [.59, .270], [.52, .286], [.456, .290], [.39, .284], [.33, .271], [.28, .251], [.242, .225], [.218, .202]];
     const spriteW = 460, spriteH = 460 * 1312 / 1199, originX = -210, originY = -245;
     function text(s, a, b, size = 18, color = '#ebdab9', align = 'left') {
@@ -53,7 +78,7 @@
             x.beginPath();
             x.rect(side * 450, 0, 450, CH);
             x.clip();
-            let delta = (sim.scroll * .58 * (side ? 1 : -1) + (side ? wd * .43 : wd * .15)) % wd;
+            let delta = (scenery.scroll * .58 * (side ? 1 : -1) + (side ? wd * .43 : wd * .15)) % wd;
             let pos = ((delta % wd) + wd) % wd - wd;
             for (let i = 0; i < 3; i++)
                 x.drawImage(im, pos + i * wd, 93, wd, ht);
@@ -99,7 +124,7 @@
             x.clip();
             // Same directions, pixel speed and scale; raise this artwork's lower
             // skyline so the storefronts and curb sit naturally above the sill.
-            const delta = sim.scroll * .58 * (side ? 1 : -1) + width * (side ? .43 : .15);
+            const delta = scenery.scroll * .58 * (side ? 1 : -1) + width * (side ? .43 : .15);
             const pos = ((delta % width) + width) % width - width;
             x.translate(pos, 40);
             x.scale(scale, scale);
@@ -170,11 +195,18 @@
         x.fillStyle = '#211b17';
         x.fillRect(0, 0, CW, CH);
         x.save();
+        // Give the exterior its own damped bump response, with no camera shake
+        // added on top. The interior and cup retain their original motion.
+        x.translate(CW / 2, CH / 2 + (sim.motion === 2 ? 0 : scenery.bump));
+        x.scale(1.017, 1.017);
+        x.translate(-CW / 2, -CH / 2);
+        game.render.drawStreet();
+        x.restore();
+        x.save();
         let j = Math.sin(sim.t * 31) * sim.ay * [.13, .035, 0][sim.motion];
         x.translate(CW / 2, CH / 2 + j);
         x.scale(1.017, 1.017);
         x.translate(-CW / 2, -CH / 2);
-        game.render.drawStreet();
         let interior = game.routes.imageFor('interior');
         if (game.assets.ready(interior))
             x.drawImage(interior, 0, 0, CW, CH);
@@ -251,6 +283,9 @@
         $('distance').textContent = `Distance ${Math.round(sim.dist)} m`;
     }
     game.render = {
+        scenery,
+        resetScenery,
+        updateScenery,
         text,
         cupPoint,
         drawStreet,
