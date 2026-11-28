@@ -104,6 +104,8 @@ Run `node tools/scenery-check.mjs` for velocity-responsive motion checks. It tes
 
 `node tools/scenery-event-check.mjs` measures naturally generated events across all routes, all motion settings and two seeds. It checks throttle/brake ratios and comfort caps, and writes before/after measurements to a temporary JSON file. Its default baseline is the prior velocity-only mapping; pass `--baseline path/to/previous/render.js` to execute a saved previous renderer alongside the current one and compare every simulation state and RNG call.
 
+`node tools/render-smoke-check.mjs` checks actual startup and visible rendering in a clean Chrome profile over offline `file://` and a temporary localhost server. It clicks the menu buttons to start gameplay, checks initialization and loaded resources, records console/request errors, and saves menu/gameplay screenshots plus observations to a printed temporary folder. The server and browser close after the check.
+
 ## Contributing
 
 After cloning once, start each task from an up-to-date main branch:
