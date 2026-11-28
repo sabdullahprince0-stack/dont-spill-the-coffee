@@ -19,6 +19,7 @@
         sim.next = 2;
         sim.drops = [];
         sim.lastSpill = 0;
+        game.render.resetScenery();
         sim.state = 'play';
         sim.keys = {};
         $('panel').hidden = true;
@@ -33,6 +34,7 @@
         acc += dt;
         while (acc >= 1 / 120) {
             game.physics.step(1 / 120);
+            game.render.updateScenery(1 / 120);
             acc -= 1 / 120;
         }
         game.audio.update(dt);
